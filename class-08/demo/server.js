@@ -4,6 +4,7 @@
 const express = require('express');
 const superagent = require('superagent');
 const cors = require('cors');
+const pg = require('pg');
 
 // Load environment variables from .env file
 require('dotenv').config();
@@ -13,6 +14,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
+
+// Database Setup
+// .env DATABASE_URL
+// const client = new pg.Client(process.env.DATABASE_URL);
+const client = new pg.Client('http://localhost:5431/city_explorer');
+client.connect();
 
 // API Routes
 app.get('/location', (request, response) => {
@@ -55,13 +62,29 @@ function Event(event) {
 }
 
 function searchToLatLong(query) {
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${process.env.GEOCODE_API_KEY}`;
+  let sqlStatement = `SELECT * FROM location WHERE search_query = $1`;
+  let values = [query];
 
-  return superagent.get(url)
-    .then(res => {
-      return new Location(query, res);
-    })
-    .catch(error => handleError(error));
+  return client.query(sqlStatement, values)
+    .then((data) => {
+      if(data.rowCount > 0) {
+        return data.rows[0];
+      } else {
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${process.env.GEOCODE_API_KEY}`;
+
+        return superagent.get(url)
+          .then(res => {
+            let newLocation = new Location(query, res);
+            let insertStatement = `INSERT INTO location (latitude, longitude, formatted_query, search_query) VALUES ($1, $2, $3, $4)`;
+            let insertValues = [newLocation.latitude, newLocation.longitude, newLocation.formatted_query, newLocation.search_query];
+
+            client.query(insertStatement, insertValues);
+
+            return newLocation;
+          })
+          .catch(error => handleError(error));
+      }
+    });
 }
 
 function getWeather(request, response) {
