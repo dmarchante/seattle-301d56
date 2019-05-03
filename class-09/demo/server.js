@@ -75,17 +75,15 @@ Location.lookupLocation = (location) => {
     .catch(console.error);
 };
 
-Location.prototype = {
-  save: function () {
-    const SQL = `INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING RETURNING id;`;
-    const values = [this.search_query, this.formatted_query, this.latitude, this.longitude];
+Location.prototype.save = function () {
+  const SQL = `INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING RETURNING id;`;
+  const values = [this.search_query, this.formatted_query, this.latitude, this.longitude];
 
-    return client.query(SQL, values)
-      .then(result => {
-        this.id = result.rows[0].id;
-        return this;
-      });
-  }
+  return client.query(SQL, values)
+    .then(result => {
+      this.id = result.rows[0].id;
+      return this;
+    });
 };
 
 function Weather(day) {
@@ -97,13 +95,11 @@ function Weather(day) {
 Weather.tableName = 'weathers';
 Weather.lookup = lookup;
 
-Weather.prototype = {
-  save: function (location_id) {
-    const SQL = `INSERT INTO ${this.tableName} (forecast, time, location_id) VALUES ($1, $2, $3);`;
-    const values = [this.forecast, this.time, location_id];
+Weather.prototype.save = function (location_id) {
+  const SQL = `INSERT INTO ${this.tableName} (forecast, time, location_id) VALUES ($1, $2, $3);`;
+  const values = [this.forecast, this.time, location_id];
 
-    client.query(SQL, values);
-  }
+  client.query(SQL, values);
 };
 
 function Event(event) {
@@ -117,13 +113,11 @@ function Event(event) {
 Event.tableName = 'events';
 Event.lookup = lookup;
 
-Event.prototype = {
-  save: function (location_id) {
-    const SQL = `INSERT INTO ${this.tableName} (link, name, event_date, summary, location_id) VALUES ($1, $2, $3, $4, $5);`;
-    const values = [this.link, this.name, this.event_date, this.summary, location_id];
+Event.prototype.save = function (location_id) {
+  const SQL = `INSERT INTO ${this.tableName} (link, name, event_date, summary, location_id) VALUES ($1, $2, $3, $4, $5);`;
+  const values = [this.link, this.name, this.event_date, this.summary, location_id];
 
-    client.query(SQL, values);
-  }
+  client.query(SQL, values);
 };
 
 function getLocation(request, response) {
