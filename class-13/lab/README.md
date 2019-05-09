@@ -15,20 +15,23 @@ city_explorer_react (repository)
 ├──public
 │  └── index.html
 ├──src
-├── index.js
-└── components
-│   └── app.js
-│   └── header.js
-│   └── search-form.js
-│   └── search-results.js
-│   └── result.js (exports each result component - ie: <Yelp>, <MovieDB> or each component may named/exported as its own file)
-│   └── map.js
+│   └── index.js
+│   └── components
+│       └── app.js
+│       └── header.js
+│       └── search-form.js
+│       └── search-results.js
+│       └── result.js (exports each result component - ie: <Yelp>, <MovieDB> or each component may named/exported as its own file)
+│       └── map.js
 ├── .eslintrc.json
 ├── .gitignore
 ├── package-lock.json
 ├── package.json
 ├── README.md
 ```
+## Resources
+- [City Explorer Deployed Backend](https://city-explorer-backend.herokuapp.com)
+
 ### Time Estimate
 
 For each of the features listed below, make an estimate of the time it will take you to complete the feature, and record your start and finish times for that feature:
